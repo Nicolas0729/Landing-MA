@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\Users\\nicol\\AppData\\Local\\Temp\\claude\\C--Users-nicol-OneDrive-Documentos-GitHub-Landing-MA\\cdeb4f71-3e68-4e90-b7c7-1ee1e3cab794\\scratchpad\\serve.js", "C:\\Users\\nicol\\OneDrive\\Documentos\\GitHub\\Landing-MA", "5500"],
+      "port": 5500
+    }
+  ]
+}
