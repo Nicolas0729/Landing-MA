@@ -180,6 +180,17 @@ section.block{padding-block:56px 8px}
 .prod .media{position:relative;background:var(--tile);border-radius:12px;aspect-ratio:3/4;overflow:hidden}
 .prod .media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
 .prod:hover .media img{transform:scale(1.04)}
+.prod .zoom{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.zoom:focus-visible{outline:2px solid var(--accent-deep);outline-offset:-2px;border-radius:12px}
+.lightbox{border:0;padding:0;background:transparent;max-width:min(92vw,560px);width:100%;overflow:visible}
+.lightbox::backdrop{background:rgba(10,30,20,.72)}
+.lightbox[open]{animation:lbIn .2s ease-out}
+@keyframes lbIn{from{opacity:0;transform:scale(.96)}}
+.lightbox figure{margin:0;background:var(--card);border-radius:18px;padding:10px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.lightbox img{display:block;width:100%;max-height:78vh;object-fit:contain;border-radius:12px;background:var(--tile)}
+.lightbox figcaption{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 6px 4px;font-size:14.5px;font-weight:600}
+.lb-close{position:absolute;top:-14px;right:-14px;width:38px;height:38px;border-radius:50%;border:0;background:var(--card);color:var(--fg);font-size:22px;line-height:1;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+@media (max-width:600px){.lb-close{top:8px;right:8px}}
 .tag{position:absolute;top:8px;left:8px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--ink);color:var(--ink-fg)}
 .tag.sale{background:var(--accent);color:var(--accent-ink)}
 .heart{position:absolute;top:6px;right:6px;width:30px;height:30px;border-radius:50%;background:var(--card);display:grid;place-items:center}
@@ -380,6 +391,10 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
 </footer>
 
 <div class="toast" id="toast"></div>
+<dialog class="lightbox" id="lightbox" aria-label="Vista previa del producto">
+  <button type="button" class="lb-close" id="lbClose" aria-label="Cerrar">×</button>
+  <figure><img id="lbImg" alt=""><figcaption><span id="lbName"></span><span id="lbPrice"></span></figcaption></figure>
+</dialog>
 
 <script>
 const RAW=[[0, "Body cuello redondo café", "Bodies", 75000, "", "img/p00.webp", 480, 640], [1, "Body espalda nadadora rosado", "Bodies", 75000, "", "img/p01.webp", 480, 640], [2, "Body halter lila", "Bodies", 75000, "", "img/p02.webp", 480, 640], [3, "Body básico · 5 colores", "Bodies", 85000, "", "img/p03.webp", 480, 350], [4, "Chaqueta deportiva blanco y negro", "Chaquetas deportivas", 100000, "", "img/p04.webp", 480, 280], [5, "Chaqueta deportiva tonos pastel", "Chaquetas deportivas", 100000, "", "img/p05.webp", 480, 284], [8, "Crop top halter verde salvia", "Crop tops", 55000, "", "img/p08.webp", 480, 640], [9, "Crop top halter beige", "Crop tops", 55000, "", "img/p09.webp", 480, 640], [10, "Crop top halter rosado", "Crop tops", 55000, "", "img/p10.webp", 480, 640], [11, "Crop top halter amarillo", "Crop tops", 55000, "", "img/p11.webp", 480, 640], [12, "Crop top halter negro", "Crop tops", 55000, "", "img/p12.webp", 480, 640], [13, "Enterizo manga larga espalda abierta rojo", "Enterizos manga larga", 116000, "", "img/p13.webp", 480, 720], [14, "Enterizo manga larga franjas café", "Enterizos manga larga", 116000, "", "img/p14.webp", 480, 720], [15, "Enterizo manga larga franjas negro", "Enterizos manga larga", 116000, "", "img/p15.webp", 480, 720], [16, "Enterizo manga larga franjas verde", "Enterizos manga larga", 116000, "", "img/p16.webp", 480, 720], [17, "Enterizo manga larga franjas vino", "Enterizos manga larga", 116000, "", "img/p17.webp", 480, 720], [18, "Enterizo manga larga franjas azul", "Enterizos manga larga", 116000, "", "img/p18.webp", 480, 720], [19, "Enterizo manga larga espalda abierta limón", "Enterizos manga larga", 116000, "", "img/p19.webp", 480, 720], [20, "Enterizo corto tiras cruzadas lila", "Enterizos cortos", 98000, "", "img/p20.webp", 480, 640], [21, "Enterizo corto espalda abierta café", "Enterizos cortos", 98000, "", "img/p21.webp", 480, 640], [22, "Enterizo corto espalda abierta blanco", "Enterizos cortos", 98000, "", "img/p22.webp", 480, 640], [23, "Enterizo corto tiras cruzadas azul", "Enterizos cortos", 98000, "", "img/p23.webp", 480, 640], [24, "Enterizo corto espalda cruzada azul cielo", "Enterizos cortos", 98000, "", "img/p24.webp", 480, 640], [25, "Enterizo corto rosado", "Enterizos cortos", 98000, "", "img/p25.webp", 480, 640], [26, "Enterizo corto azul cielo", "Enterizos cortos", 98000, "", "img/p26.webp", 480, 640], [27, "Enterizo corto tiras lila", "Enterizos cortos", 98000, "", "img/p27.webp", 480, 640], [28, "Enterizo corto tiras azul cielo", "Enterizos cortos", 98000, "", "img/p28.webp", 480, 720], [29, "Enterizo corto beige", "Enterizos cortos", 98000, "", "img/p29.webp", 480, 640], [30, "Enterizo largo lila", "Enterizos largos", 113000, "", "img/p30.webp", 480, 640], [31, "Enterizo corto ribete blanco azul cielo", "Enterizos cortos", 98000, "", "img/p31.webp", 480, 532], [32, "Enterizo largo tiras cruzadas rosado", "Enterizos largos", 113000, "", "img/p32.webp", 480, 640], [33, "Enterizo largo tiras cruzadas verde salvia", "Enterizos largos", 113000, "", "img/p33.webp", 480, 640], [34, "Enterizo largo tiras cruzadas lavanda", "Enterizos largos", 113000, "", "img/p34.webp", 480, 620], [35, "Enterizo largo café", "Enterizos largos", 113000, "", "img/p35.webp", 480, 640], [36, "Enterizo largo blanco", "Enterizos largos", 113000, "", "img/p36.webp", 480, 640], [37, "Enterizo largo espalda abierta lila", "Enterizos largos", 113000, "", "img/p37.webp", 480, 675], [38, "Enterizo largo vino", "Enterizos largos", 113000, "", "img/p38.webp", 480, 720], [39, "Enterizo largo blanco frente", "Enterizos largos", 113000, "", "img/p39.webp", 480, 640], [40, "Enterizo largo tiras rosado", "Enterizos largos", 113000, "", "img/p40.webp", 480, 672], [41, "Enterizo largo tiras cruzadas azul", "Enterizos largos", 113000, "", "img/p41.webp", 480, 640], [42, "Enterizo largo beige", "Enterizos largos", 113000, "", "img/p42.webp", 480, 640], [43, "Enterizo largo moca", "Enterizos largos", 113000, "", "img/p43.webp", 480, 640], [44, "Enterizo largo rosado palo", "Enterizos largos", 113000, "", "img/p44.webp", 480, 720], [45, "Enterizo largo espalda abierta lavanda", "Enterizos largos", 113000, "", "img/p45.webp", 480, 640], [46, "Set short blanco ribete verde", "Set short", null, "", "img/p46.webp", 480, 640], [47, "Set short manga corta blanco", "Set short", null, "", "img/p47.webp", 480, 720], [48, "Set short manga larga · colores", "Set short", null, "", "img/p48.webp", 480, 640], [49, "Set short manga corta negro", "Set short", null, "", "img/p49.webp", 480, 720], [50, "Set short azul ribete", "Set short", null, "", "img/p50.webp", 480, 720], [51, "Set short top · 5 colores", "Set short", null, "", "img/p51.webp", 480, 640], [52, "Set short top asimétrico negro", "Set short", null, "", "img/p52.webp", 480, 720], [53, "Set short negro ribete blanco", "Set short", null, "", "img/p53.webp", 480, 772], [54, "Set short azul rey", "Set short", null, "", "img/p54.webp", 480, 698], [55, "Set short coral y lavanda", "Set short", null, "", "img/p55.webp", 480, 720], [56, "Set falda short azul cielo", "Sets deportivos", 105000, "", "img/p56.webp", 480, 853], [57, "Set falda short blanco", "Sets deportivos", 105000, "", "img/p57.webp", 480, 720], [58, "Set falda short amarillo pastel", "Sets deportivos", 105000, "", "img/p58.webp", 480, 849], [59, "Set leggings lavanda", "Sets deportivos", 128000, "", "img/p59.webp", 480, 720], [60, "Set leggings negro", "Sets deportivos", 128000, "", "img/p60.webp", 480, 719], [61, "Set leggings magenta", "Sets deportivos", 128000, "", "img/p61.webp", 480, 720], [62, "Set leggings verde salvia", "Sets deportivos", 128000, "", "img/p62.webp", 480, 720], [63, "Set leggings rosado", "Sets deportivos", 128000, "", "img/p63.webp", 480, 854], [64, "Set leggings gris", "Sets deportivos", 128000, "", "img/p64.webp", 480, 853], [65, "Set leggings azul navy", "Sets deportivos", 128000, "", "img/p65.webp", 480, 720], [66, "Set leggings amarillo con top coral", "Sets deportivos", 128000, "", "img/p66.webp", 480, 720], [67, "Set leggings limón", "Sets deportivos", 128000, "", "img/p67.webp", 480, 720], [68, "Set leggings · todos los colores", "Sets deportivos", 128000, "c/u", "img/p68.webp", 480, 759], [69, "Set leggings franjas palo de rosa", "Sets deportivos", 135000, "", "img/p69.webp", 480, 720], [70, "Set leggings franjas azul", "Sets deportivos", 135000, "", "img/p70.webp", 480, 720], [71, "Set leggings top ribete · colores", "Sets deportivos", null, "", "img/p71.webp", 480, 838], [72, "Set leggings top tiras · colores", "Sets deportivos", null, "", "img/p72.webp", 480, 640]];
@@ -412,7 +427,7 @@ const favs=new Set();let cart=0;const sel=new Set();
 const byId=Object.fromEntries(PRODUCTS.map(p=>[p.id,p]));
 
 function prodCard(p){return `<article class="prod">
-  <div class="media"><img src="${p.img}" alt="${p.name}" width="${p.w}" height="${p.h}" loading="lazy" decoding="async">
+  <div class="media"><button type="button" class="zoom" data-zoom="${p.id}" aria-label="Ver imagen de ${p.name}"><img src="${p.img}" alt="${p.name}" width="${p.w}" height="${p.h}" loading="lazy" decoding="async"></button>
   <button class="heart ${favs.has(p.id)?"on":""}" data-fav="${p.id}" aria-label="Guardar ${p.name} en favoritos"><svg viewBox="0 0 24 24">${ICON.heart}</svg></button></div>
   <div class="info"><span class="name">${p.name}</span>
   <div class="row">${priceHTML(p)}
@@ -436,7 +451,15 @@ render();
 
 const toastEl=document.getElementById("toast");let tt;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove("show"),1900)}
+/* Popup de vista previa de la imagen del producto */
+const lb=document.getElementById("lightbox");
+function openLightbox(p){const img=document.getElementById("lbImg");img.src=p.img;img.alt=p.name;
+  document.getElementById("lbName").textContent=p.name;document.getElementById("lbPrice").innerHTML=priceHTML(p);lb.showModal()}
+document.getElementById("lbClose").addEventListener("click",()=>lb.close());
+lb.addEventListener("click",e=>{if(e.target===lb)lb.close()});
 document.addEventListener("click",e=>{
+  const zoom=e.target.closest("[data-zoom]");
+  if(zoom){openLightbox(byId[zoom.dataset.zoom]);return}
   const add=e.target.closest("[data-add]");
   if(add){cart++;toast(`${byId[add.dataset.add].name} agregado al carrito`);return}
   const fav=e.target.closest("[data-fav]");
