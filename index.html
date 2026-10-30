@@ -4,18 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="MA ropa deportiva femenina · Inspired by Movement. Enterizos, sets, bodies y crop tops con envíos nacionales.">
-<link rel="icon" href="logo-mark.png">
+<link rel="icon" href="favicon.png" type="image/png" sizes="64x64">
 <title>Inspired by Movement</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <!-- El catálogo y las fotos de Drive se piden desde el inicio, en paralelo con el resto de la página -->
 <link rel="preload" href="/api/catalog" as="fetch" crossorigin="anonymous">
 <link rel="preconnect" href="https://lh3.googleusercontent.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Las fuentes cargan sin bloquear el primer pintado de la página -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap"></noscript>
+<!-- Fuentes alojadas en el sitio: se descargan desde el inicio, sin esperar a Google Fonts -->
+<link rel="preload" href="fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500;font-stretch:100%;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-stretch:100%;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:800;font-stretch:100%;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/dm-sans-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:500;font-display:swap;src:url(fonts/dm-sans-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'DM Sans';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/dm-sans-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 html,body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -250,9 +254,10 @@ section.block{padding-block:56px 8px}
 .trust .in{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:18px 22px}
 
 footer{margin-top:56px;border-top:1px solid var(--line)}
-footer .wrap{padding-block:40px;display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:28px}
+footer .wrap{padding-block:40px;display:grid;grid-template-columns:1.4fr repeat(2,1fr);gap:28px}
 footer h4{font-size:13px;margin:0 0 12px;font-family:var(--f-display)}
 footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13.5px;color:var(--muted)}
+footer ul a:hover{color:var(--accent-deep);text-decoration:underline;text-underline-offset:3px}
 footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
 /* Registro de clientas (leads) */
 .leads{margin-top:56px}
@@ -292,6 +297,7 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
   .best{grid-template-columns:1fr 1fr}
   .trust .in{grid-template-columns:1fr 1fr}
   footer .wrap{grid-template-columns:1fr 1fr}
+  footer .wrap>div:first-child{grid-column:1/-1}
 }
 @media (max-width:860px){
   header.top>.wrap{padding-block:10px}
@@ -313,7 +319,7 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
   .best{grid-template-columns:1fr}
   .perks .wrap,.trust .in{grid-template-columns:1fr}
   .icons .hide-sm{display:none}
-  footer .wrap{grid-template-columns:1fr}
+  footer .wrap{grid-template-columns:1fr 1fr;gap:24px 16px}
   .pbanner .art{width:100%;opacity:.35}
   .pbanner .art::before{display:none}
 }
@@ -443,8 +449,7 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
       <p>Ropa deportiva para mujer. <a href="#novedades" style="text-decoration:underline">Entérate primero de eventos y descuentos</a>.</p>
     </div>
     <div><h4>Categorías</h4><ul id="footCats"></ul></div>
-    <div><h4>Ayuda</h4><ul><li>Envíos y entregas</li><li>Cambios y devoluciones</li><li>Medios de pago</li><li>Guía de tallas</li></ul></div>
-    <div><h4>Contacto</h4><ul><li>Instagram</li><li>WhatsApp</li><li>Correo</li></ul></div>
+    <div><h4>Contacto</h4><ul><li><a href="https://www.instagram.com/movewithma_/" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://wa.me/573217577438" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="mailto:mainspiredby@gmail.com" target="_blank" rel="noopener">Correo</a></li></ul></div>
   </div>
   <div class="legal"><div class="wrap"><span>© 2026 Inspired by Movement</span><a href="privacidad.html" style="text-decoration:underline">Política de tratamiento de datos</a></div></div>
 </footer>
