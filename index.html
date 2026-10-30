@@ -254,8 +254,32 @@ footer .wrap{padding-block:40px;display:grid;grid-template-columns:1.4fr repeat(
 footer h4{font-size:13px;margin:0 0 12px;font-family:var(--f-display)}
 footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13.5px;color:var(--muted)}
 footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
-.news{display:flex;gap:8px;margin-top:12px;max-width:340px}
-.news input{flex:1;min-width:0;padding:11px 12px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--fg);font:inherit;font-size:13.5px}
+/* Registro de clientas (leads) */
+.leads{margin-top:56px}
+.leads .box{background:#173a28;color:#fff;border-radius:22px;padding:clamp(28px,5vw,48px);display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,4vw,48px);align-items:center;position:relative;overflow:hidden}
+.leads .box::before{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(102,177,132,.35),transparent 70%);pointer-events:none}
+.leads .eyebrow{color:var(--accent-soft)}
+.leads h2{font-size:clamp(26px,3.6vw,38px);line-height:1.08;margin:10px 0 12px}
+.leads p.lead-txt{margin:0;color:rgba(255,255,255,.82);font-size:15px;max-width:42ch}
+.leads ul{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px;font-size:14px;color:rgba(255,255,255,.9)}
+.leads ul li{display:flex;gap:10px;align-items:center}
+.leads ul li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.lead-form{display:grid;gap:12px;position:relative}
+.lead-form label{display:grid;gap:6px;font-size:13px;font-weight:600;color:rgba(255,255,255,.9)}
+.lead-form input[type=text],.lead-form input[type=tel]{width:100%;padding:13px 14px;border-radius:11px;border:1.5px solid transparent;background:#fff;color:var(--fg);font:inherit;font-size:15px}
+.lead-form input:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(102,177,132,.35)}
+.lead-form input[aria-invalid=true]{border-color:#f0a3a3}
+.lead-form .consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:12.5px;color:rgba(255,255,255,.75);grid-template-columns:none}
+.lead-form .consent input{margin:2px 0 0;width:17px;height:17px;flex:none;accent-color:var(--accent)}
+.lead-form .btn{justify-content:center;width:100%;padding:14px 22px}
+.lead-form .btn[disabled]{opacity:.7;cursor:progress}
+.lead-form .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.lead-msg{margin:0;font-size:13.5px;min-height:1.2em}
+.lead-msg.err{color:#ffc9c9}
+.lead-done{display:grid;gap:8px;text-align:center;padding:12px 0}
+.lead-done b{font-family:var(--f-display);font-size:22px}
+.lead-done span{color:rgba(255,255,255,.82);font-size:14.5px}
+@media (max-width:860px){.leads .box{grid-template-columns:1fr}}
 .legal{border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 .legal .wrap{display:flex;justify-content:space-between;padding-block:16px;gap:10px;flex-wrap:wrap}
 
@@ -383,14 +407,40 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
     </div>
     <div class="trust"><div class="in" id="trust"></div></div>
   </section>
+
+  <section class="leads wrap" id="novedades" aria-labelledby="leadsTitle">
+    <div class="box">
+      <div>
+        <span class="eyebrow">Comunidad MA</span>
+        <h2 id="leadsTitle">Entérate primero de nuestros eventos y descuentos</h2>
+        <p class="lead-txt">Déjanos tu nombre y tu WhatsApp y te avisamos antes que nadie cuando haya algo especial para ti.</p>
+        <ul>
+          <li>Descuentos y promociones exclusivas</li>
+          <li>Eventos, lanzamientos y colores nuevos</li>
+          <li>Te escribimos solo por WhatsApp, sin spam</li>
+        </ul>
+      </div>
+      <form class="lead-form" id="leadForm" novalidate>
+        <label>Nombre
+          <input type="text" name="name" id="leadName" autocomplete="given-name" required minlength="2" maxlength="60" placeholder="¿Cómo te llamas?">
+        </label>
+        <label>Teléfono (WhatsApp)
+          <input type="tel" name="phone" id="leadPhone" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="300 123 4567">
+        </label>
+        <label class="hp" aria-hidden="true">No llenar <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+        <label class="consent"><input type="checkbox" id="leadOk" required> Acepto recibir novedades por WhatsApp y el tratamiento de mis datos para este fin.</label>
+        <button class="btn btn-accent" type="submit">Quiero enterarme</button>
+        <p class="lead-msg" id="leadMsg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
 </main>
 
 <footer id="nosotros">
   <div class="wrap">
     <div>
       <a href="#" class="logo" aria-label="Inicio"><img src="logo-full.webp" alt="Logo Inspired by Movement" class="logo-full" width="180" height="140" loading="lazy" decoding="async"></a>
-      <p>Ropa deportiva para mujer. Suscríbete y entérate primero de los colores nuevos.</p>
-      <form class="news" id="newsForm"><input id="email" type="email" required placeholder="tu@correo.com" aria-label="Correo"><button class="btn btn-accent" style="padding:10px 16px">Suscribirme</button></form>
+      <p>Ropa deportiva para mujer. <a href="#novedades" style="text-decoration:underline">Entérate primero de eventos y descuentos</a>.</p>
     </div>
     <div><h4>Categorías</h4><ul id="footCats"></ul></div>
     <div><h4>Ayuda</h4><ul><li>Envíos y entregas</li><li>Cambios y devoluciones</li><li>Medios de pago</li><li>Guía de tallas</li></ul></div>
@@ -478,6 +528,14 @@ render();
 fetch("/api/catalog").then(r=>r.ok?r.json():Promise.reject(r.status)).then(d=>showCatalog(d.products)).catch(()=>showCatalog());
 setTimeout(()=>showCatalog(),4000);
 
+/* Lleva al filtro de categorías del catálogo dejándolo justo debajo de la barra superior fija,
+   así se ven la categoría elegida y los productos */
+function goToFilter(){
+  const head=document.querySelector("header.top").getBoundingClientRect().height;
+  const y=document.querySelector(".cat-filter").getBoundingClientRect().top+scrollY-head-12;
+  scrollTo({top:y,behavior:reduce.matches?"auto":"smooth"});
+}
+
 const toastEl=document.getElementById("toast");let tt;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove("show"),1900)}
 /* Comprar ahora: abre el WhatsApp de venta directa con el nombre, precio y foto de la prenda */
@@ -505,7 +563,7 @@ document.addEventListener("click",e=>{
   if(fav){const id=fav.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);document.querySelectorAll(`[data-fav="${id}"]`).forEach(b=>b.classList.toggle("on",favs.has(id)));
     toast(favs.has(id)?"Guardado en favoritos":"Quitado de favoritos");return}
   const f=e.target.closest("[data-filter]");if(f){const n=f.dataset.filter;if(n==="Todo")sel.clear();else sel.has(n)?sel.delete(n):sel.add(n);render();return}
-  const cat=e.target.closest("[data-cat]");if(cat){e.preventDefault();sel.clear();sel.add(cat.dataset.cat);render();document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});return}
+  const cat=e.target.closest("[data-cat]");if(cat){e.preventDefault();sel.clear();sel.add(cat.dataset.cat);render();goToFilter();return}
 });
 /* Selectores múltiples de categorías (buscador de la lupa y catálogo) */
 var MSS;
@@ -540,7 +598,29 @@ function showSearch(o){sbar.classList.remove("done");sbar.classList.toggle("open
 sbar.addEventListener("transitionend",e=>{if(e.target===sbar&&e.propertyName==="grid-template-rows"&&sbar.classList.contains("open"))sbar.classList.add("done")});
 lupa.addEventListener("click",()=>showSearch(!sbar.classList.contains("open")));
 document.getElementById("q").addEventListener("keydown",e=>{if(e.key==="Escape"){showSearch(false);lupa.focus()}});
-document.getElementById("newsForm").addEventListener("submit",e=>{e.preventDefault();document.getElementById("email").value="";toast("Listo, te avisaremos de los colores nuevos")});
+/* Registro de clientas: se envía a api/lead.js, que lo guarda en la hoja de Google Sheets */
+const leadForm=document.getElementById("leadForm"),leadMsg=document.getElementById("leadMsg");
+const leadName=document.getElementById("leadName"),leadPhone=document.getElementById("leadPhone"),leadOk=document.getElementById("leadOk");
+// Celular colombiano: 10 dígitos que empiezan por 3, con o sin +57
+const normPhone=v=>{const d=v.replace(/\D/g,"").replace(/^57(?=3\d{9}$)/,"");return /^3\d{9}$/.test(d)?d:""};
+leadForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=leadName.value.trim().replace(/\s+/g," "),phone=normPhone(leadPhone.value);
+  leadName.setAttribute("aria-invalid",name.length<2);leadPhone.setAttribute("aria-invalid",!phone);
+  const fail=t=>{leadMsg.className="lead-msg err";leadMsg.textContent=t};
+  if(name.length<2){fail("Escribe tu nombre.");leadName.focus();return}
+  if(!phone){fail("Escribe un celular de 10 dígitos, por ejemplo 300 123 4567.");leadPhone.focus();return}
+  if(!leadOk.checked){fail("Debes aceptar recibir novedades para registrarte.");leadOk.focus();return}
+  const btn=leadForm.querySelector("button[type=submit]");btn.disabled=true;btn.textContent="Enviando…";leadMsg.className="lead-msg";leadMsg.textContent="";
+  try{
+    const r=await fetch("/api/lead",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name,phone,website:leadForm.website.value})});
+    if(!r.ok)throw new Error(r.status);
+    leadForm.innerHTML=`<div class="lead-done"><b>¡Listo, ${esc(name.split(" ")[0])}!</b><span>Ya estás en la Comunidad MA. Te escribiremos al WhatsApp con los próximos eventos y descuentos.</span></div>`;
+  }catch(err){
+    btn.disabled=false;btn.textContent="Quiero enterarme";
+    fail("No pudimos registrarte en este momento. Intenta de nuevo en un rato.");
+  }
+});
 </script>
 </body>
 </html>
