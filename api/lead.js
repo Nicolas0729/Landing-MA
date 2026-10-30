@@ -47,7 +47,8 @@ module.exports = async (req, res) => {
     // Motivo sin datos sensibles: "token" = la clave no coincide; "no_json" = Apps Script devolvió una página (acceso o URL incorrectos)
     const reason = out ? out.error || "rejected" : "no_json";
     // Título de la página que devolvió Google (ej. inicio de sesión o error del script), útil para diagnosticar
-    const page = out ? undefined : (text.match(/<title>([^<]*)<\/title>/i) || [])[1];
+    const page = out ? undefined : [(text.match(/<title>([^<]*)<\/title>/i) || [])[1],
+      text.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ").trim().slice(0, 200)].filter(Boolean).join(" — ");
     console.error(`Google Sheets respondió ${r.status} (${reason}): ${text.slice(0, 300)}`);
     send(res, 502, { error: "sheet_error", reason, status: r.status, page });
   } catch (err) {
