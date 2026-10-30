@@ -10,6 +10,10 @@ async function readBody(req) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
 }
 
+// Las cuentas de Google Workspace entregan la URL como /a/macros/<dominio>/s/…/exec, que pide iniciar sesión
+// a visitantes anónimos; la forma /macros/s/…/exec abre igual para "Cualquier usuario"
+const sheetUrl = () => (process.env.LEADS_SHEET_URL || "").trim().replace(/^(https:\/\/script\.google\.com)\/a\/macros\/[^/]+\//, "$1/macros/");
+
 const send = (res, status, data) => {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -20,13 +24,13 @@ const send = (res, status, data) => {
 module.exports = async (req, res) => {
   // Diagnóstico: GET /api/lead?check abre la URL configurada (doGet del Apps Script) sin mostrarla
   if (req.method === "GET" && /[?&]check\b/.test(req.url)) {
-    const url = process.env.LEADS_SHEET_URL;
+    const url = sheetUrl();
     if (!url) return send(res, 200, { configured: false });
     try {
       const r = await fetch(url, { redirect: "follow" });
       const t = await r.text();
       const page = t.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
-      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
+      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), workspaceUrl: /\/a\/macros\//.test(process.env.LEADS_SHEET_URL), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
     } catch (err) { return send(res, 200, { configured: true, error: String(err.message) }); }
   }
   if (req.method !== "POST") return send(res, 405, { error: "method_not_allowed" });
@@ -41,7 +45,7 @@ module.exports = async (req, res) => {
   if (name.length < 2) return send(res, 400, { error: "invalid_name" });
   if (!/^3\d{9}$/.test(digits)) return send(res, 400, { error: "invalid_phone" });
 
-  const url = process.env.LEADS_SHEET_URL, token = process.env.LEADS_TOKEN;
+  const url = sheetUrl(), token = (process.env.LEADS_TOKEN || "").trim();
   if (!url || !token) return send(res, 503, { error: "not_configured" });
 
   try {
