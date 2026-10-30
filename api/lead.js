@@ -30,7 +30,9 @@ module.exports = async (req, res) => {
       const r = await fetch(url, { redirect: "follow" });
       const t = await r.text();
       const page = t.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
-      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), workspaceUrl: /\/a\/macros\//.test(process.env.LEADS_SHEET_URL), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
+      // Últimos 6 caracteres del id de la implementación, para compararla con la URL que se ve en Apps Script
+      const id = (url.match(/\/s\/([^/]+)\/exec/) || [])[1] || "";
+      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), idEnd: id.slice(-6), workspaceUrl: /\/a\/macros\//.test(process.env.LEADS_SHEET_URL), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
     } catch (err) { return send(res, 200, { configured: true, error: String(err.message) }); }
   }
   if (req.method !== "POST") return send(res, 405, { error: "method_not_allowed" });
