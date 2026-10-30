@@ -9,7 +9,7 @@ on:
   # También al cambiar los nombres o el script (los commits de esta misma tarea no la vuelven a disparar)
   push:
     branches: [main]
-    paths: [data/names.json, scripts/name-photos.mjs]
+    paths: [data/names.json, scripts/name-photos.mjs, .github/workflows/name-photos.yml]
 
 permissions:
   contents: write
@@ -22,9 +22,9 @@ jobs:
   name-photos:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
 
