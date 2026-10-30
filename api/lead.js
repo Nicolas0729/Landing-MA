@@ -18,6 +18,17 @@ const send = (res, status, data) => {
 };
 
 module.exports = async (req, res) => {
+  // Diagnóstico: GET /api/lead?check abre la URL configurada (doGet del Apps Script) sin mostrarla
+  if (req.method === "GET" && /[?&]check\b/.test(req.url)) {
+    const url = process.env.LEADS_SHEET_URL;
+    if (!url) return send(res, 200, { configured: false });
+    try {
+      const r = await fetch(url, { redirect: "follow" });
+      const t = await r.text();
+      const page = t.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
+      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
+    } catch (err) { return send(res, 200, { configured: true, error: String(err.message) }); }
+  }
   if (req.method !== "POST") return send(res, 405, { error: "method_not_allowed" });
   let body;
   try { body = await readBody(req); } catch { return send(res, 400, { error: "invalid_json" }); }
