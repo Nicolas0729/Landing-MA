@@ -40,11 +40,16 @@ module.exports = async (req, res) => {
       body: JSON.stringify({ token, name, phone: "+57" + digits, source: "landing" }),
       redirect: "follow",
     });
-    const out = await r.json().catch(() => ({}));
-    if (!r.ok || !out.ok) throw new Error(`Google Sheets respondió ${r.status} ${JSON.stringify(out)}`);
-    send(res, 200, { ok: true });
+    const text = await r.text();
+    let out = null;
+    try { out = JSON.parse(text); } catch {}
+    if (r.ok && out && out.ok) return send(res, 200, { ok: true });
+    // Motivo sin datos sensibles: "token" = la clave no coincide; "no_json" = Apps Script devolvió una página (acceso o URL incorrectos)
+    const reason = out ? out.error || "rejected" : "no_json";
+    console.error(`Google Sheets respondió ${r.status} (${reason}): ${text.slice(0, 300)}`);
+    send(res, 502, { error: "sheet_error", reason, status: r.status });
   } catch (err) {
     console.error(err);
-    send(res, 502, { error: "sheet_error" });
+    send(res, 502, { error: "sheet_error", reason: "network" });
   }
 };
