@@ -11,7 +11,7 @@ const { loadCatalog } = require("../api/catalog.js");
 const names = JSON.parse(fs.readFileSync(NAMES_FILE, "utf8"));
 const products = await loadCatalog();
 const unnamed = products.filter(p => !names[p.id]);
-console.log(`${products.length} fotos en Drive, ${unnamed.length} sin nombre`);
+console.log(`::notice::${products.length} fotos en Drive, ${unnamed.length} sin nombre`);
 if (!unnamed.length || process.argv.includes("--dry-run")) {
   unnamed.forEach(p => console.log(`- ${p.id} (${p.cat})`));
   process.exit(0);
@@ -65,10 +65,11 @@ for (const p of unnamed) {
   try {
     names[p.id] = await nameFor(p);
     added++;
-    console.log(`✓ ${p.cat}: ${names[p.id]}`);
+    console.log(`::notice::${p.cat}: ${names[p.id]}`);
   } catch (err) {
     // La foto sigue mostrándose con el nombre de su categoría; se reintenta en la próxima ejecución
-    console.error(`✗ ${p.id} (${p.cat}): ${err.message}`);
+    // ::error:: lo muestra como anotación en la ejecución de GitHub
+    console.log(`::error::No se pudo nombrar ${p.id} (${p.cat}): ${String(err.message).replace(/\r?\n/g, " ")}`);
   }
 }
 if (added) fs.writeFileSync(NAMES_FILE, JSON.stringify(names, null, 2) + "\n");
