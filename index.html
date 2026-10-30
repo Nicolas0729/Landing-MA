@@ -202,11 +202,11 @@ section.block{padding-block:56px 8px}
 .price.ask{color:var(--accent-deep);font-size:13.5px}
 .price{display:flex;gap:8px;align-items:baseline;font-weight:700;font-size:14.5px}
 .price s{color:var(--muted);font-weight:400;font-size:12.5px}
-.row{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.row{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:auto}
 .stars{color:var(--star);font-size:12px;letter-spacing:1px}
 .stars small{color:var(--muted);letter-spacing:0;margin-left:3px}
-.add{width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--ink-fg);display:grid;place-items:center;flex:none}
-.add svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
+.add{width:100%;height:40px;border-radius:10px;background:var(--ink);color:var(--ink-fg);display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:13.5px;transition:background .15s,color .15s}
+.add svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;flex:none}
 .add:hover{background:var(--accent);color:var(--accent-ink)}
 .empty{grid-column:1/-1;color:var(--muted);padding:30px 0}
 
@@ -431,7 +431,7 @@ function prodCard(p){return `<article class="prod">
   <button class="heart ${favs.has(p.id)?"on":""}" data-fav="${p.id}" aria-label="Guardar ${p.name} en favoritos"><svg viewBox="0 0 24 24">${ICON.heart}</svg></button></div>
   <div class="info"><span class="name">${p.name}</span>
   <div class="row">${priceHTML(p)}
-  <button class="add" data-add="${p.id}" aria-label="Agregar ${p.name} al carrito"><svg viewBox="0 0 24 24">${ICON.cart}</svg></button></div></div></article>`}
+  <button class="add" data-add="${p.id}" aria-label="Comprar ahora ${p.name}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON.cart}</svg>Comprar ahora</button></div></div></article>`}
 
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -451,6 +451,15 @@ render();
 
 const toastEl=document.getElementById("toast");let tt;
 function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove("show"),1900)}
+/* Comprar ahora: abre el WhatsApp de venta directa con el nombre, precio y foto de la prenda */
+const WA_NUM="573217577438";
+// En local la foto apunta al sitio publicado en GitHub Pages para que el enlace funcione en WhatsApp
+const SITE=/^https?:$/.test(location.protocol)&&!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)?location.href:"https://nicolas0729.github.io/Landing-MA/";
+function waLink(p){
+  const price=p.price?money(p.price)+(p.note?` ${p.note}`:""):"Consultar precio";
+  const msg=`¡Hola!, quiero esta prenda\n\n*${p.name}*\nPrecio: ${price}\nFoto: ${new URL(p.img,SITE).href}`;
+  return `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
+}
 /* Popup de vista previa de la imagen del producto */
 const lb=document.getElementById("lightbox");
 function openLightbox(p){const img=document.getElementById("lbImg");img.src=p.img;img.alt=p.name;
@@ -461,7 +470,7 @@ document.addEventListener("click",e=>{
   const zoom=e.target.closest("[data-zoom]");
   if(zoom){openLightbox(byId[zoom.dataset.zoom]);return}
   const add=e.target.closest("[data-add]");
-  if(add){cart++;toast(`${byId[add.dataset.add].name} agregado al carrito`);return}
+  if(add){window.open(waLink(byId[add.dataset.add]),"_blank","noopener");return}
   const fav=e.target.closest("[data-fav]");
   if(fav){const id=+fav.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);document.querySelectorAll(`[data-fav="${id}"]`).forEach(b=>b.classList.toggle("on",favs.has(id)));
     toast(favs.has(id)?"Guardado en favoritos":"Quitado de favoritos");return}
@@ -483,7 +492,9 @@ function renderMs(){
 function openMs(o,m){getMss().forEach(x=>{const open=!!o&&(!m||x===m);x.panel.hidden=!open;x.btn.setAttribute("aria-expanded",open)})}
 getMss().forEach(m=>{
   m.btn.addEventListener("click",()=>openMs(m.panel.hidden,m));
-  m.panel.addEventListener("change",e=>{const n=e.target.dataset.ms;if(!n)return;e.target.checked?sel.add(n):sel.delete(n);render()});
+  m.panel.addEventListener("change",e=>{const n=e.target.dataset.ms;if(!n)return;e.target.checked?sel.add(n):sel.delete(n);render();
+    if(m.scroll){showSearch(false);lupa.focus({preventScroll:true});document.getElementById("catalogo").scrollIntoView({behavior:"smooth"})}
+    else{openMs(false);m.btn.focus({preventScroll:true})}});
   document.getElementById(m.id+"Clear").addEventListener("click",()=>{sel.clear();render()});
   document.getElementById(m.id+"Done").addEventListener("click",()=>{openMs(false);if(m.scroll)document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});else m.btn.focus()});
 });
