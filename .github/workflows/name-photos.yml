@@ -1,0 +1,45 @@
+# Cada 15 minutos revisa el Drive; si hay fotos sin nombre, Claude las nombra, se guarda data/names.json
+# y el commit hace que Vercel publique la landing con los nombres nuevos.
+name: Nombrar fotos nuevas del Drive
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: name-photos
+  cancel-in-progress: false
+
+jobs:
+  name-photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar SDK de Anthropic
+        run: npm install --no-save --no-package-lock @anthropic-ai/sdk@1.3.0
+
+      - name: Nombrar fotos sin nombre
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/name-photos.mjs
+
+      - name: Guardar nombres nuevos
+        run: |
+          if git diff --quiet -- data/names.json; then
+            echo "Sin cambios"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/names.json
+          git commit -m "Nombrar fotos nuevas del Drive"
+          git push
