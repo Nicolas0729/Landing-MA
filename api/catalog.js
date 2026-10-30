@@ -1,6 +1,7 @@
 // Catálogo en vivo desde la carpeta pública de Google Drive.
-// Cada subcarpeta es una categoría y cada foto es un producto cuyo nombre de archivo es el precio (ej. "$75.000" o "$128.000 C/U").
-// Los nombres de las prendas viven en data/names.json (id de Drive → nombre); si una foto no tiene nombre, se usa la categoría.
+// Cada subcarpeta es una categoría y cada foto es un producto. El nombre del archivo da el nombre y el precio de la prenda:
+// "Body cuello redondo café - $75.000", "Set leggings · colores - $128.000 C/U", solo "$75.000" o solo "Body halter lila".
+// Si el archivo no trae nombre se usa data/names.json (id de Drive → nombre) y, si tampoco está ahí, la categoría.
 const NAMES = require("../data/names.json");
 
 const ROOT = "1QnbwsuoM7DG5SRlIuxPK-Ld1GJjZ5o7x";
@@ -32,10 +33,17 @@ async function listFolder(id) {
     .map(([, id, href, title]) => ({ id, title: decode(title).trim(), folder: href.includes("/folders/") }));
 }
 
-function parsePrice(title) {
-  const m = title.match(/\$\s*([\d.,]+)\s*(.*)$/);
-  if (!m) return { price: 0, note: "" };
-  return { price: +m[1].replace(/[.,]/g, ""), note: m[2].trim().replace(/^c\/u$/i, "c/u") };
+// Nombres automáticos de cámara o del celular, que no son el nombre de la prenda
+const AUTO_NAME = /^([0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}|(img|dsc|dscn|pxl|photo|foto|image|imagen|whatsapp|screenshot|captura)([\s_.-].*|\d.*)?|[\d\s_.-]+)$/i;
+
+function parseTitle(title) {
+  const base = title.replace(/\.(jpe?g|png|webp|heic|heif|gif)$/i, "").trim();
+  const m = base.match(/\$\s*([\d.,]+)\s*(.*)$/);
+  const price = m ? +m[1].replace(/[.,]/g, "") : 0;
+  const note = m ? m[2].trim().replace(/^c\/u$/i, "c/u") : "";
+  // Lo que va antes del precio, sin el guion o separador que lo une al precio
+  const name = (m ? base.slice(0, m.index) : base).replace(/[\s\-–—|:,]+$/, "").trim();
+  return { name: name && !AUTO_NAME.test(name) ? name : "", price, note };
 }
 
 async function loadCatalog() {
@@ -44,13 +52,13 @@ async function loadCatalog() {
   const products = [];
   folders.forEach((f, i) => {
     const cat = catName(f.title);
-    const files = lists[i].filter(e => !e.folder).map(e => ({ ...e, ...parsePrice(e.title) }));
+    const files = lists[i].filter(e => !e.folder).map(e => ({ ...e, ...parseTitle(e.title) }));
     // Fotos sin precio en el nombre toman el precio de la carpeta cuando todas las que lo tienen coinciden; si no, "Consultar precio"
     const priced = [...new Set(files.filter(e => e.price).map(e => e.price + "|" + e.note))];
     const [folderPrice, folderNote] = priced.length === 1 ? priced[0].split("|") : [0, ""];
     files.forEach(e => {
       const price = e.price || +folderPrice, note = e.price ? e.note : folderNote;
-      products.push({ id: e.id, name: NAMES[e.id] || SINGULAR[cat] || cat, cat, price, note, img: `https://lh3.googleusercontent.com/d/${e.id}=w600` });
+      products.push({ id: e.id, name: e.name || NAMES[e.id] || SINGULAR[cat] || cat, cat, price, note, img: `https://lh3.googleusercontent.com/d/${e.id}=w600` });
     });
   });
   return products;
@@ -70,3 +78,4 @@ module.exports = async (req, res) => {
   }
 };
 module.exports.loadCatalog = loadCatalog;
+module.exports.parseTitle = parseTitle;
