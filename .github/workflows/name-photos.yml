@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+  # También al cambiar los nombres o el script (los commits de esta misma tarea no la vuelven a disparar)
+  push:
+    branches: [main]
+    paths: [data/names.json, scripts/name-photos.mjs]
 
 permissions:
   contents: write
