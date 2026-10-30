@@ -10,9 +10,8 @@
 <!-- El catálogo y las fotos de Drive se piden desde el inicio, en paralelo con el resto de la página -->
 <link rel="preload" href="/api/catalog" as="fetch" crossorigin="anonymous">
 <link rel="preconnect" href="https://lh3.googleusercontent.com">
-<!-- Fuentes alojadas en el sitio: se descargan desde el inicio, sin esperar a Google Fonts -->
+<!-- Fuentes alojadas en el sitio (sin pasar por Google Fonts); se precarga solo la de títulos, que usa el texto principal -->
 <link rel="preload" href="fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:500;font-stretch:100%;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:700;font-stretch:100%;font-display:swap;src:url(fonts/bricolage-grotesque-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
