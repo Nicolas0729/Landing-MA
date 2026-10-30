@@ -1,6 +1,8 @@
 // Recibe los registros de la sección "Comunidad MA" y los guarda en una hoja de Google Sheets
 // a través del Apps Script de scripts/leads-apps-script.gs.
-// Variables de entorno en Vercel: LEADS_SHEET_URL (URL del Apps Script publicado) y LEADS_TOKEN (la misma clave que en el script).
+// La URL del Apps Script publicado va aquí (no es secreta: sin la clave no se puede escribir en la hoja).
+// La clave va en Vercel como variable de entorno LEADS_TOKEN y debe ser igual a TOKEN en el script.
+const SHEET_URL = "https://script.google.com/macros/s/AKfycby6lgDrhpkAOPkzUcaAJM4FsTArexG21q9m7Heycwvar1kUX5FZd2X5nbOVriWAG-UWqQ/exec";
 
 async function readBody(req) {
   // En Vercel el cuerpo ya viene en req.body; en el servidor local hay que leerlo del stream
@@ -12,7 +14,7 @@ async function readBody(req) {
 
 // Las cuentas de Google Workspace entregan la URL como /a/macros/<dominio>/s/…/exec, que pide iniciar sesión
 // a visitantes anónimos; la forma /macros/s/…/exec abre igual para "Cualquier usuario"
-const sheetUrl = () => (process.env.LEADS_SHEET_URL || "").trim().replace(/^(https:\/\/script\.google\.com)\/a\/macros\/[^/]+\//, "$1/macros/");
+const sheetUrl = () => SHEET_URL.trim().replace(/^(https:\/\/script\.google\.com)\/a\/macros\/[^/]+\//, "$1/macros/");
 
 const send = (res, status, data) => {
   res.statusCode = status;
@@ -32,7 +34,7 @@ module.exports = async (req, res) => {
       const page = t.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 120);
       // Últimos 6 caracteres del id de la implementación, para compararla con la URL que se ve en Apps Script
       const id = (url.match(/\/s\/([^/]+)\/exec/) || [])[1] || "";
-      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), idEnd: id.slice(-6), workspaceUrl: /\/a\/macros\//.test(process.env.LEADS_SHEET_URL), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
+      return send(res, 200, { configured: true, endsWithExec: /\/exec\/?$/.test(url), idEnd: id.slice(-6), status: r.status, page, token: Boolean(process.env.LEADS_TOKEN) });
     } catch (err) { return send(res, 200, { configured: true, error: String(err.message) }); }
   }
   if (req.method !== "POST") return send(res, 405, { error: "method_not_allowed" });
