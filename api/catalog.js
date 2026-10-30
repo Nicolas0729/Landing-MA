@@ -1,0 +1,72 @@
+// Catálogo en vivo desde la carpeta pública de Google Drive.
+// Cada subcarpeta es una categoría y cada foto es un producto cuyo nombre de archivo es el precio (ej. "$75.000" o "$128.000 C/U").
+// Los nombres de las prendas viven en data/names.json (id de Drive → nombre); si una foto no tiene nombre, se usa la categoría.
+const NAMES = require("../data/names.json");
+
+const ROOT = "1QnbwsuoM7DG5SRlIuxPK-Ld1GJjZ5o7x";
+// Nombre de la carpeta en Drive (normalizado) → categoría de la landing
+const CATS = {
+  "bodies": "Bodies",
+  "chaquetas deportivas": "Chaquetas deportivas",
+  "crop top": "Crop tops",
+  "crop tops": "Crop tops",
+  "enterizo manga larga": "Enterizos manga larga",
+  "enterizos manga larga": "Enterizos manga larga",
+  "enterizos cortos": "Enterizos cortos",
+  "enterizos largos": "Enterizos largos",
+  "set short": "Set short",
+  "sets deportivos": "Sets deportivos",
+};
+const SINGULAR = { "Bodies": "Body", "Chaquetas deportivas": "Chaqueta deportiva", "Crop tops": "Crop top", "Enterizos manga larga": "Enterizo manga larga", "Enterizos cortos": "Enterizo corto", "Enterizos largos": "Enterizo largo", "Set short": "Set short", "Sets deportivos": "Set deportivo" };
+
+const decode = s => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+// Quita negritas Unicode (𝗕𝗼𝗱𝗶𝗲𝘀) y emojis del nombre de la carpeta
+const clean = s => decode(s).normalize("NFKC").replace(/[^\p{L}\p{N}\s/]/gu, "").replace(/\s+/g, " ").trim();
+const catName = title => { const c = clean(title); return CATS[c.toLowerCase()] || c; };
+
+async function listFolder(id) {
+  const r = await fetch(`https://drive.google.com/embeddedfolderview?id=${id}`, { headers: { "Accept-Language": "es" } });
+  if (!r.ok) throw new Error(`Drive respondió ${r.status} para la carpeta ${id}`);
+  const html = await r.text();
+  return [...html.matchAll(/<div class="flip-entry" id="entry-([^"]+)".*?<a href="([^"]+)".*?<div class="flip-entry-title">([^<]*)<\/div>/gs)]
+    .map(([, id, href, title]) => ({ id, title: decode(title).trim(), folder: href.includes("/folders/") }));
+}
+
+function parsePrice(title) {
+  const m = title.match(/\$\s*([\d.,]+)\s*(.*)$/);
+  if (!m) return { price: 0, note: "" };
+  return { price: +m[1].replace(/[.,]/g, ""), note: m[2].trim().replace(/^c\/u$/i, "c/u") };
+}
+
+async function loadCatalog() {
+  const folders = (await listFolder(ROOT)).filter(e => e.folder);
+  const lists = await Promise.all(folders.map(f => listFolder(f.id)));
+  const products = [];
+  folders.forEach((f, i) => {
+    const cat = catName(f.title);
+    const files = lists[i].filter(e => !e.folder).map(e => ({ ...e, ...parsePrice(e.title) }));
+    // Fotos sin precio en el nombre toman el precio de la carpeta cuando todas las que lo tienen coinciden; si no, "Consultar precio"
+    const priced = [...new Set(files.filter(e => e.price).map(e => e.price + "|" + e.note))];
+    const [folderPrice, folderNote] = priced.length === 1 ? priced[0].split("|") : [0, ""];
+    files.forEach(e => {
+      const price = e.price || +folderPrice, note = e.price ? e.note : folderNote;
+      products.push({ id: e.id, name: NAMES[e.id] || SINGULAR[cat] || cat, cat, price, note, img: `https://lh3.googleusercontent.com/d/${e.id}=w600` });
+    });
+  });
+  return products;
+}
+
+module.exports = async (req, res) => {
+  try {
+    const products = await loadCatalog();
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    // El navegador la reutiliza 1 minuto; Vercel la guarda 5 minutos y la renueva en segundo plano
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
+    res.end(JSON.stringify({ updated: new Date().toISOString(), products }));
+  } catch (err) {
+    res.statusCode = 502;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ error: err.message }));
+  }
+};
+module.exports.loadCatalog = loadCatalog;
