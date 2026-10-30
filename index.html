@@ -425,7 +425,7 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
           <input type="text" name="name" id="leadName" autocomplete="given-name" required minlength="2" maxlength="60" placeholder="¿Cómo te llamas?">
         </label>
         <label>Teléfono (WhatsApp)
-          <input type="tel" name="phone" id="leadPhone" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="300 123 4567">
+          <input type="tel" name="phone" id="leadPhone" autocomplete="tel" inputmode="tel" required maxlength="20" placeholder="+57 3000000000">
         </label>
         <label class="hp" aria-hidden="true">No llenar <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         <label class="consent"><input type="checkbox" id="leadOk" required><span>Acepto recibir novedades por WhatsApp y el tratamiento de mis datos para este fin, según la <a href="privacidad.html" target="_blank" rel="noopener" style="text-decoration:underline">política de tratamiento de datos</a>.</span></label>
@@ -609,7 +609,7 @@ leadForm.addEventListener("submit",async e=>{
   leadName.setAttribute("aria-invalid",name.length<2);leadPhone.setAttribute("aria-invalid",!phone);
   const fail=t=>{leadMsg.className="lead-msg err";leadMsg.textContent=t};
   if(name.length<2){fail("Escribe tu nombre.");leadName.focus();return}
-  if(!phone){fail("Escribe un celular de 10 dígitos, por ejemplo 300 123 4567.");leadPhone.focus();return}
+  if(!phone){fail("Escribe un celular de 10 dígitos, por ejemplo +57 3000000000.");leadPhone.focus();return}
   if(!leadOk.checked){fail("Debes aceptar recibir novedades para registrarte.");leadOk.focus();return}
   const btn=leadForm.querySelector("button[type=submit]");btn.disabled=true;btn.textContent="Enviando…";leadMsg.className="lead-msg";leadMsg.textContent="";
   try{
