@@ -2,7 +2,8 @@
 // Cada subcarpeta es una categoría y cada foto es un producto. El nombre del archivo da el nombre y el precio de la prenda:
 // "Body cuello redondo café - $75.000", "$75.000 body cuello redondo café", "$128.000 C/U set leggings",
 // solo "$75.000" o solo "Body halter lila".
-// Si el archivo no trae nombre se usa data/names.json (id de Drive → nombre) y, si tampoco está ahí, la categoría.
+// El nombre descriptivo de data/names.json (id de Drive → nombre, según la foto) tiene prioridad; si la foto no está ahí
+// se usa el nombre del archivo y, si tampoco trae nombre, la categoría.
 const NAMES = require("../data/names.json");
 
 const ROOT = "1QnbwsuoM7DG5SRlIuxPK-Ld1GJjZ5o7x";
@@ -70,7 +71,7 @@ async function loadCatalog() {
     const [folderPrice, folderNote] = priced.length === 1 ? priced[0].split("|") : [0, ""];
     files.forEach(e => {
       const price = e.price || +folderPrice, note = e.price ? e.note : folderNote;
-      products.push({ id: e.id, name: e.name || NAMES[e.id] || SINGULAR[cat] || cat, cat, price, note, img: `https://lh3.googleusercontent.com/d/${e.id}=w600` });
+      products.push({ id: e.id, name: NAMES[e.id] || e.name || SINGULAR[cat] || cat, cat, price, note, img: `https://lh3.googleusercontent.com/d/${e.id}=w600` });
     });
   });
   return products;
