@@ -47,11 +47,6 @@ h1,h2,h3{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:
 svg{display:block}
 
 /* Barra de anuncios */
-.promo{background:var(--ink);color:var(--ink-fg);font-size:12.5px;font-weight:500}
-.promo .wrap{display:flex;justify-content:center;gap:clamp(16px,5vw,56px);padding-block:9px;flex-wrap:wrap;text-align:center}
-.promo .ig{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:13.5px}
-.promo .ig:hover{color:#B8DEC5}
-.promo .ig svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
 
 /* Header */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
@@ -62,9 +57,10 @@ nav.main{display:flex;gap:26px;margin:0 auto;font-size:14px;font-weight:500}
 nav.main a{position:relative;padding-block:4px;color:var(--muted)}
 nav.main a:hover,nav.main a.on{color:var(--fg)}
 nav.main a.on::after{content:"";position:absolute;left:0;right:0;bottom:-15px;height:2px;background:var(--accent)}
-.icons{display:flex;gap:6px;align-items:center;margin-left:auto}
-.icon-btn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;position:relative}
-.icon-btn:hover,.icon-btn.on{background:var(--surface)}
+.icons{display:flex;gap:8px;align-items:center;margin-left:auto}
+/* Instagram y lupa: círculos verde un tono más oscuro que el fondo */
+.icon-btn{width:38px;height:38px;border-radius:100%;display:grid;place-items:center;position:relative;background:var(--accent-soft);color:var(--accent-deep);transition:background .15s,color .15s}
+.icon-btn:hover,.icon-btn.on{background:var(--accent);color:var(--accent-ink)}
 .icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .count{position:absolute;top:2px;right:0;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-size:10.5px;font-weight:700;display:grid;place-items:center}
 .menu-btn{display:none}
@@ -112,9 +108,9 @@ nav.main a.on::after{content:"";position:absolute;left:0;right:0;bottom:-15px;he
 .hero{background:linear-gradient(180deg,var(--surface),var(--bg));overflow:hidden}
 .hero .wrap{display:grid;grid-template-columns:1fr;gap:32px;align-items:center;padding-block:64px 56px}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-deep)}
-.hero h1{font-size:clamp(38px,5.6vw,68px);line-height:1.02;margin:0 0 16px;font-weight:800}
-.hero .eyebrow{display:block;margin-bottom:12px}
-.hero p.lead{color:var(--muted);font-size:17px;max-width:40ch;margin:0}
+.hero h1{font-size:clamp(31px,4.8vw,58px);line-height:1.04;margin:0 0 16px;font-weight:800}
+.hero .eyebrow{display:block;margin-bottom:12px;font-size:11px}
+.hero p.lead{color:var(--muted);font-size:15.5px;max-width:40ch;margin:0}
 .cta{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:700;font-size:14.5px;transition:transform .15s,background .15s}
 .btn:active{transform:scale(.97)}
@@ -131,7 +127,7 @@ nav.main a.on::after{content:"";position:absolute;left:0;right:0;bottom:-15px;he
 
 /* Beneficios */
 .perks{border-block:1px solid var(--line)}
-.perks .wrap{display:grid;grid-template-columns:repeat(3,1fr);padding-block:22px;gap:16px}
+.perks .wrap{display:grid;grid-template-columns:repeat(2,1fr);padding-block:22px;gap:16px}
 .perk{display:flex;gap:12px;align-items:center}
 .perk .ic{width:42px;height:42px;border-radius:12px;background:var(--accent-soft);color:var(--accent-deep);display:grid;place-items:center;flex:none}
 .perk .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -185,12 +181,30 @@ section.block{padding-block:56px 8px}
 
 
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.prod{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;display:flex;flex-direction:column;min-width:0}
+/* Card de producto: franja verde arriba, panel blanco con título, foto, precio, color y cantidad, y botón de ancho completo abajo */
+.prod{--band:#173a28;background:var(--band);border-radius:20px;padding-top:10px;display:flex;flex-direction:column;min-width:0;overflow:hidden;box-shadow:0 8px 22px rgba(20,60,38,.10)}
+.prod .card-in{background:var(--card);border-radius:18px 18px 0 0;padding:12px;display:flex;flex-direction:column;gap:10px;flex:1}
+.prod .ph{text-align:center;display:grid;gap:4px}
+.prod .name{font-family:var(--f-display);font-weight:800;font-size:14px;line-height:1.15;text-transform:uppercase;letter-spacing:.01em;color:var(--band);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:3.45em;margin:0}
 .prod .media{position:relative;background:var(--tile);border-radius:12px;aspect-ratio:3/4;overflow:hidden}
+.prod .pr{display:flex;align-items:baseline;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-top:auto}
+.prod .pr .now{font-family:var(--f-display);font-weight:800;font-size:21px;line-height:1;color:var(--fg)}
+.prod .pr .now small{font-family:var(--f-body);font-size:11.5px;font-weight:600;color:var(--muted);margin-left:3px}
+.prod .pr s{color:var(--muted);opacity:.75;font-size:12.5px;font-weight:500;text-decoration-thickness:1px}
+.prod .pr .ask{font-weight:700;font-size:14px;color:var(--accent-deep)}
+.prod .opts{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.prod .lbl{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.prod .qty{display:flex;align-items:center;gap:2px}
+.prod .qty button{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);display:grid;place-items:center;font-size:16px;font-weight:700;line-height:1;color:var(--fg);background:#fff}
+.prod .qty button:hover{border-color:var(--accent)}
+.prod .qty button:disabled{opacity:.4;cursor:default}
+.prod .qty output{min-width:22px;text-align:center;font-weight:700;font-size:14px}
+.prod .add{border-radius:0;height:48px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.prod .add:hover{background:#7cc297;color:var(--accent-ink)}
 .prod .media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
 .prod:hover .media img{transform:scale(1.04)}
-.prod.sk .media,.prod.sk .name,.prod.sk .price,.prod.sk .add{background:var(--tile);border-radius:8px;animation:skp 1.2s ease-in-out infinite alternate}
-.prod.sk .media{border-radius:12px}.prod.sk .name{width:80%}.prod.sk .price{width:45%;height:18px}
+.prod.sk .media,.prod.sk .name,.prod.sk .pr{background:var(--tile);border-radius:8px;animation:skp 1.2s ease-in-out infinite alternate}
+.prod.sk .media{border-radius:12px}.prod.sk .name{width:80%;margin:0 auto}.prod.sk .pr{width:55%;height:22px}.prod.sk .add{display:block;height:48px;background:var(--accent);opacity:.5}
 @keyframes skp{to{opacity:.45}}
 .prod .zoom{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in}
 .zoom:focus-visible{outline:2px solid var(--accent-deep);outline-offset:-2px;border-radius:12px}
@@ -311,12 +325,28 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
   .promos{grid-template-columns:1fr}
 }
 @media (max-width:600px){
+  /* Portada más compacta para que el catálogo se vea al abrir la página */
+  .hero .wrap{padding-block:20px 16px}
+  .hero h1{margin-bottom:10px}
+  .hero .eyebrow{margin-bottom:8px}
+  .perks .wrap{padding-block:12px}
+  section.block#catalogo{padding-top:20px}
+  .cat-head{gap:10px}
+  .sec-head.cat-head{margin-bottom:14px}
   .cats{grid-template-columns:repeat(2,1fr)}
   .grid{grid-template-columns:repeat(2,1fr);gap:10px}
-  .prod{padding:7px}
+  .prod{padding-top:8px;border-radius:18px}
+  .prod .card-in{padding:10px 9px;gap:8px;border-radius:16px 16px 0 0}
+  .prod .name{font-size:12.5px}
+  .prod .pr .now{font-size:18px}
+  .prod .add{height:44px;font-size:12.5px}
   .pbanner .content{max-width:100%}
   .best{grid-template-columns:1fr}
-  .perks .wrap,.trust .in{grid-template-columns:1fr}
+  .trust .in{grid-template-columns:1fr}
+  /* Los 3 datos de la tienda siguen en una fila: ícono arriba y texto centrado */
+  .perks .wrap{gap:10px;padding-block:18px}
+  .perks .perk{flex-direction:column;text-align:center;gap:8px}
+  .perks .perk b{font-size:12.5px;line-height:1.3}
   .icons .hide-sm{display:none}
   footer .wrap{grid-template-columns:1fr 1fr;gap:24px 16px}
   .pbanner .art{width:100%;opacity:.35}
@@ -326,13 +356,10 @@ footer p{color:var(--muted);font-size:13.5px;max-width:34ch}
 </style>
 </head>
 <body>
-<div class="promo"><div class="wrap">
-  <a class="ig" href="https://www.instagram.com/movewithma_/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg>@movewithma_</a>
-</div></div>
-
 <header class="top"><div class="wrap">
   <a href="#" class="logo" aria-label="Inicio"><img src="logo-mark.webp" alt="Logo Inspired by Movement" class="logo-mark" width="53" height="38" fetchpriority="high"></a>
   <div class="icons">
+    <a class="icon-btn" href="https://www.instagram.com/movewithma_/" target="_blank" rel="noopener" aria-label="Instagram @movewithma_"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r="1" fill="currentColor" stroke="none"/></svg></a>
     <button class="icon-btn" aria-label="Buscar" aria-expanded="false" aria-controls="searchbar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
   </div>
 </div>
@@ -479,9 +506,8 @@ const ICON={
 };
 const perk=(i,t,s)=>`<div class="perk"><div class="ic"><svg viewBox="0 0 24 24">${ICON[i]}</svg></div><div><b>${t}</b>${s?`<small>${s}</small>`:""}</div></div>`;
 ICON.pin='<path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>';
-ICON.spark='<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/>';
 ICON.bolt='<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>';
-document.getElementById("perks").innerHTML=perk("pin","Antioquia, Colombia","")+perk("spark","Estilo · Confianza · Versatilidad","")+perk("truck","Envíos nacionales","");
+document.getElementById("perks").innerHTML=perk("pin","Antioquia, Colombia","")+perk("truck","Envíos nacionales","");
 document.getElementById("trust").innerHTML=perk("star","Tela de calidad","Suave y con buen ajuste")+perk("heart","Colores para todas","Cada modelo en varios tonos")+perk("shield","Compra protegida","Tus datos están seguros")+perk("truck","Entrega rápida","Despachos a todo el país");
 
 const money=v=>"$"+v.toLocaleString("es-CO");
@@ -498,12 +524,15 @@ const imgAttrs=(p,widths,sizes)=>typeof p.id==="string"
   ?`src="${DRIVE_IMG(p.id,widths[1])}" srcset="${widths.map(w=>`${DRIVE_IMG(p.id,w)} ${w}w`).join(", ")}" sizes="${sizes}"`
   :`src="${p.img}"${p.w?` width="${p.w}" height="${p.h}"`:""}`;
 // Las primeras cards se piden con prioridad; el resto solo al acercarse con el scroll
-function prodCard(p,i){const first=i<4;return `<article class="prod">
+const qtys=new Map();
+const cardPrice=p=>p.price?`<div class="pr num"><span class="now">${money(p.price)}${p.note?`<small>${p.note}</small>`:""}</span><s aria-label="Antes ${money(listPrice(p.price))}">${money(listPrice(p.price))}</s></div>`:`<div class="pr"><span class="ask">Consultar precio</span></div>`;
+function prodCard(p,i){const first=i<4,q=qtys.get(String(p.id))||1;return `<article class="prod"><div class="card-in">
+  <header class="ph"><h3 class="name">${p.name}</h3></header>
   <div class="media"><button type="button" class="zoom" data-zoom="${p.id}" aria-label="Ver imagen de ${p.name}"><img ${imgAttrs(p,[240,360,480,720],CARD_SIZES)} alt="${p.name}" loading="${first?"eager":"lazy"}"${first?' fetchpriority="high"':""} decoding="async" referrerpolicy="no-referrer"></button>
   <button class="heart ${favs.has(String(p.id))?"on":""}" data-fav="${p.id}" aria-label="Guardar ${p.name} en favoritos"><svg viewBox="0 0 24 24">${ICON.heart}</svg></button></div>
-  <div class="info"><span class="name">${p.name}</span>
-  <div class="row">${priceHTML(p)}
-  <button class="add" data-add="${p.id}" aria-label="Comprar ahora ${p.name}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON.cart}</svg>Comprar ahora</button></div></div></article>`}
+  ${cardPrice(p)}
+  <div class="opts"><span class="lbl">Cantidad</span><div class="qty"><button type="button" data-qty="-1" data-id="${p.id}" aria-label="Menos" ${q<=1?"disabled":""}>−</button><output aria-live="polite">${q}</output><button type="button" data-qty="1" data-id="${p.id}" aria-label="Más" ${q>=10?"disabled":""}>+</button></div></div></div>
+  <button class="add" data-add="${p.id}" aria-label="Comprar ahora ${p.name}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON.cart}</svg>Comprar ahora</button></article>`}
 
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 const esc=t=>t.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -523,7 +552,7 @@ document.getElementById("footCats").innerHTML=CATS.map(c=>`<li><a href="#catalog
 /* Catálogo en vivo desde Google Drive (api/catalog.js). Mientras llega se muestran cards de carga,
    así no se descargan dos veces las fotos; si no responde en 4 s se usa el catálogo incluido arriba */
 let ready=false;
-const SKELETON='<article class="prod sk" aria-hidden="true"><div class="media"></div><div class="info"><span class="name"></span><div class="row"><span class="price"></span><span class="add"></span></div></div></article>'.repeat(8);
+const SKELETON='<article class="prod sk" aria-hidden="true"><div class="card-in"><div class="ph"><span class="name"></span></div><div class="media"></div><div class="pr"></div></div><span class="add"></span></article>'.repeat(8);
 function showCatalog(products){
   if(ready)return;ready=true;
   if(products&&products.length){PRODUCTS=products;byId=Object.fromEntries(PRODUCTS.map(p=>[p.id,p]))}
@@ -548,9 +577,10 @@ function toast(m){toastEl.textContent=m;toastEl.classList.add("show");clearTimeo
 const WA_NUM="573217577438";
 // En local la foto apunta al sitio publicado en GitHub Pages para que el enlace funcione en WhatsApp
 const SITE=/^https?:$/.test(location.protocol)&&!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)?location.href:"https://nicolas0729.github.io/Landing-MA/";
-function waLink(p){
+function waLink(p,qty=1){
   const price=p.price?money(p.price)+(p.note?` ${p.note}`:""):"Consultar precio";
-  const msg=`¡Hola!, quiero esta prenda\n\n*${p.name}*\nPrecio: ${price}\nFoto: ${new URL(p.img,SITE).href}`;
+  const total=p.price&&qty>1?`\nTotal: ${money(p.price*qty)}`:"";
+  const msg=`¡Hola!, quiero esta prenda\n\n*${p.name}*\nPrecio: ${price}\nCantidad: ${qty}${total}\nFoto: ${new URL(p.img,SITE).href}`;
   return `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`;
 }
 /* Popup de vista previa de la imagen del producto */
@@ -564,7 +594,10 @@ document.addEventListener("click",e=>{
   const zoom=e.target.closest("[data-zoom]");
   if(zoom){openLightbox(byId[zoom.dataset.zoom]);return}
   const add=e.target.closest("[data-add]");
-  if(add){window.open(waLink(byId[add.dataset.add]),"_blank","noopener");return}
+  if(add){window.open(waLink(byId[add.dataset.add],qtys.get(add.dataset.add)||1),"_blank","noopener");return}
+  const qb=e.target.closest("[data-qty]");
+  if(qb){const id=qb.dataset.id,q=Math.min(10,Math.max(1,(qtys.get(id)||1)+ +qb.dataset.qty));qtys.set(id,q);
+    const box=qb.parentElement;box.querySelector("output").textContent=q;box.querySelector('[data-qty="-1"]').disabled=q<=1;box.querySelector('[data-qty="1"]').disabled=q>=10;return}
   const fav=e.target.closest("[data-fav]");
   if(fav){const id=fav.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);document.querySelectorAll(`[data-fav="${id}"]`).forEach(b=>b.classList.toggle("on",favs.has(id)));
     toast(favs.has(id)?"Guardado en favoritos":"Quitado de favoritos");return}
