@@ -1,6 +1,7 @@
 // Catálogo en vivo desde la carpeta pública de Google Drive.
 // Cada subcarpeta es una categoría y cada foto es un producto. El nombre del archivo da el nombre y el precio de la prenda:
-// "Body cuello redondo café - $75.000", "Set leggings · colores - $128.000 C/U", solo "$75.000" o solo "Body halter lila".
+// "Body cuello redondo café - $75.000", "$75.000 body cuello redondo café", "$128.000 C/U set leggings",
+// solo "$75.000" o solo "Body halter lila".
 // Si el archivo no trae nombre se usa data/names.json (id de Drive → nombre) y, si tampoco está ahí, la categoría.
 const NAMES = require("../data/names.json");
 
@@ -36,14 +37,25 @@ async function listFolder(id) {
 // Nombres automáticos de cámara o del celular, que no son el nombre de la prenda
 const AUTO_NAME = /^([0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}|(img|dsc|dscn|pxl|photo|foto|image|imagen|whatsapp|screenshot|captura)([\s_.-].*|\d.*)?|[\d\s_.-]+)$/i;
 
+const SEP = /^[\s\-–—|:,]+|[\s\-–—|:,]+$/g;
+const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+
 function parseTitle(title) {
   const base = title.replace(/\.(jpe?g|png|webp|heic|heif|gif)$/i, "").trim();
-  const m = base.match(/\$\s*([\d.,]+)\s*(.*)$/);
+  const m = base.match(/\$\s*([\d.,]+)(.*)$/);
   const price = m ? +m[1].replace(/[.,]/g, "") : 0;
-  const note = m ? m[2].trim().replace(/^c\/u$/i, "c/u") : "";
-  // Lo que va antes del precio, sin el guion o separador que lo une al precio
-  const name = (m ? base.slice(0, m.index) : base).replace(/[\s\-–—|:,]+$/, "").trim();
-  return { name: name && !AUTO_NAME.test(name) ? name : "", price, note };
+  // Lo que va antes y después del precio, sin el guion o separador que lo une al precio
+  const before = (m ? base.slice(0, m.index) : base).replace(SEP, "");
+  let after = m ? m[2].replace(SEP, "") : "", note = "";
+  // "C/U" (cada uno) es una nota que se muestra junto al precio, no parte del nombre
+  const cu = after.match(/^c\/u\.?(\s+|$)/i);
+  if (cu) { note = "c/u"; after = after.slice(cu[0].length).replace(SEP, ""); }
+  // El nombre puede ir antes ("Body café - $75.000") o después del precio ("$75.000 body café");
+  // si va antes, lo que sigue al precio es una nota
+  let name = before;
+  if (before) note = [note, after].filter(Boolean).join(" ");
+  else name = after;
+  return { name: name && !AUTO_NAME.test(name) ? capitalize(name) : "", price, note };
 }
 
 async function loadCatalog() {
